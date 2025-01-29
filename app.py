@@ -18,5 +18,5 @@ async def get_info():
     return {
         "email": "afariogunjohn2502@gmail.com",
         "current_datetime": current_datetime,
-        "github_url": "https://github.com/johnafariogun/HNG12/simple-api"
+        "github_url": "https://github.com/johnafariogun/HNG12.git"
     }
