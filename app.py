@@ -6,8 +6,8 @@ app=FastAPI()
 
 app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_methods=["*"],
+        allow_origins=["https://hng12-owcr.onrender.com"],
+        allow_methods=["GET"],
         allow_headers=["*"],
         allow_credentials=True,
     )
