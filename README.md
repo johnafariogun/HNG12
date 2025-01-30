@@ -32,7 +32,7 @@ Before running this project locally, make sure you have the following:
    Clone this repository to your local machine using the following command:
 
    ```bash
-   git clone https://github.com/johnafariogun/HNG12.git
+   git clone https://github.com/johnafariogun/HNG12
    cd HNG12
    ```
 
@@ -87,7 +87,7 @@ The API will return a **JSON** response with the following structure:
 {
   "email": "afariogunjohn2502@gmail.com",
   "current_datetime": "2025-01-30T09:30:00Z",
-  "github_url": "https://github.com/johnafariogun/HNG12.git"
+  "github_url": "https://github.com/johnafariogun/HNG12"
 }
 ```
 
@@ -108,7 +108,7 @@ curl http://127.0.0.1:8000/
 {
   "email": "afariogunjohn2502@gmail.com",
   "current_datetime": "2025-01-30T09:30:00Z",
-  "github_url": "https://github.com/johnafariogun/HNG12.git"
+  "github_url": "https://github.com/johnafariogun/HNG12"
 }
 ```
 
