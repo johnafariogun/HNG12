@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from datetime import datetime
-from pytz import timezone
 from fastapi.middleware.cors import CORSMiddleware
 app=FastAPI()
 
@@ -13,7 +12,7 @@ app.add_middleware(
     )
 @app.get('/')
 async def get_info():
-    current_datetime = datetime.now(timezone('UTC')).isoformat()
+    current_datetime = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
 
     return {
         "email": "afariogunjohn2502@gmail.com",
