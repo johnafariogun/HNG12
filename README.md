@@ -59,7 +59,7 @@ Additionally, it calculates the **sum of the digits** of the number and fetches 
   ```
 
 ## Deployment
-This API is designed to be deployed on **Render**, but it can also run on other cloud services.
+This API is designed to be deployed on **Render** [Visit Classify API](https://hng12-owcr.onrender.com/api/classify-number?number=371), but it can also run on other cloud services.
 
 To deploy on **Render**:
 1. Push your repository to GitHub.
