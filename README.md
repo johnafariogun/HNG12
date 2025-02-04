@@ -24,6 +24,7 @@ Additionally, it calculates the **sum of the digits** of the number and fetches 
 - FastAPI
 - Uvicorn
 - Aiohttp
+- numpy
 
 ### Setup
 1. **Clone the Repository**
