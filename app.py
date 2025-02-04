@@ -14,6 +14,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from typing import Union
 import aiohttp
 
 app = FastAPI()
@@ -75,12 +76,12 @@ async def get_fun_fact(num: int) -> str:
 
 
 @app.get("/api/classify-number")
-async def classify_number(number: str):
+async def classify_number(number: Union[int, str]):
     """
     Classify a given number based on its mathematical properties.
 
     Parameters:
-    - number (str): The number to classify, received as a query parameter.
+    - number (int, str): The number to classify, received as a query parameter.
 
     Returns:
     - JSON response with properties:
