@@ -1,87 +1,112 @@
-from fastapi import FastAPI, HTTPException
-from datetime import datetime
+"""
+FastAPI application for classifying numbers based on mathematical properties.
+
+This API determines whether a given number is:
+- Prime
+- Perfect
+- Armstrong
+- Odd/Even
+
+It also provides the digit sum and a fun fact about the number using the Numbers API.
+"""
+
+import asyncio
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import requests
-app=FastAPI()
+import aiohttp
 
+app = FastAPI()
+
+# Enable CORS for specified origin
 app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["https://hng12-owcr.onrender.com"],
-        allow_methods=["GET"],
-        allow_headers=["*"],
-        allow_credentials=True,
-    )
-@app.get('/')
-async def get_info():
-    current_datetime = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
-
-    return {
-        "email": "afariogunjohn2502@gmail.com",
-        "current_datetime": current_datetime,
-        "github_url": "https://github.com/johnafariogun/HNG12"
-    }
+    CORSMiddleware,
+    allow_origins=["https://hng12-owcr.onrender.com"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
 
 
-
-# Helper function to check if a number is prime
 def is_prime(num: int) -> bool:
-    if num <= 1:
+    """Check if a number is prime."""
+    if num < 2:
         return False
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
+    if num in (2, 3):
+        return True
+    if num % 2 == 0 or num % 3 == 0:
+        return False
+    i = 5
+    while i * i <= num:
+        if num % i == 0 or num % (i + 2) == 0:
             return False
+        i += 6
     return True
 
-# Helper function to check if a number is a perfect number
-def is_perfect(num: int) -> bool:
-    divisors = [i for i in range(1, num) if num % i == 0]
-    return sum(divisors) == num
 
-# Helper function to check if a number is Armstrong
+def is_perfect(n: int) -> bool:
+    """Check if a number is a perfect number."""
+    if n < 2:
+        return False
+    return sum(i for i in range(1, n // 2 + 1) if n % i == 0) == n
+
+
 def is_armstrong(num: int) -> bool:
-    digits = [int(digit) for digit in str(num)]
-    return num == sum([digit ** len(digits) for digit in digits])
+    """Check if a number is an Armstrong number."""
+    digits = list(map(int, str(num)))
+    return num == sum(d ** len(digits) for d in digits)
 
-# Helper function to sum digits of a number
+
 def digit_sum(num: int) -> int:
-    return sum([int(digit) for digit in str(num)])
+    """Calculate the sum of digits of a number."""
+    return sum(map(int, str(num)))
 
-# Helper function to get fun fact from Numbers API
-def get_fun_fact(num: int) -> str:
-    response = requests.get(f"http://numbersapi.com/{num}?json&math=true")
-    if response.status_code == 200:
-        return response.json().get("text", "No fun fact found.")
-    return "No fun fact found."
+
+async def get_fun_fact(num: int) -> str:
+    """Fetch a fun fact about the number from the Numbers API."""
+    url = f"http://numbersapi.com/{num}?json&math=true"
+    try:
+        async with aiohttp.ClientSession() as session, session.get(url, timeout=5) as response:
+            if response.status == 200:
+                data = await response.json()
+                return data.get("text", "No fun fact available.")
+    except (asyncio.TimeoutError, aiohttp.ClientError):
+        return "No fun fact found."
+
 
 @app.get("/api/classify-number")
-async def classify_number(number: int):
-    # Check if the number is a valid integer
-    if not isinstance(number, int):
-        raise HTTPException(status_code=400, detail="Invalid input. Please provide an integer.")
-    
-    # Determine properties of the number
-    is_armstrong_number = is_armstrong(number)
-    is_odd = number % 2 != 0
-    is_even = not is_odd
+async def classify_number(number: str):
+    """
+    Classify a given number based on its mathematical properties.
+
+    Parameters:
+    - number (str): The number to classify, received as a query parameter.
+
+    Returns:
+    - JSON response with properties:
+      - is_prime: Whether the number is prime.
+      - is_perfect: Whether the number is perfect.
+      - properties: List of properties (Armstrong, Odd/Even).
+      - digit_sum: Sum of the digits of the number.
+      - fun_fact: A mathematical fact about the number.
+    """
+    try:
+        number = int(number)
+    except ValueError:
+        return JSONResponse(
+            status_code=400,
+            content={"number": number, "error": True},
+        )
+
     is_prime_number = is_prime(number)
     is_perfect_number = is_perfect(number)
-    properties = []
-
-    if is_armstrong_number:
-        properties.append("armstrong")
-    if is_odd:
-        properties.append("odd")
-    else:
-        properties.append("even")
-
-    # Get digit sum
+    is_armstrong_number = is_armstrong(number)
     digit_sum_value = digit_sum(number)
+    properties = ["armstrong"] if is_armstrong_number else []
+    properties.append("odd" if number % 2 else "even")
 
-    # Get fun fact from Numbers API
-    fun_fact = get_fun_fact(number)
+    fun_fact = await get_fun_fact(number)
 
-    # Return JSON response
     return JSONResponse(content={
         "number": number,
         "is_prime": is_prime_number,
@@ -90,12 +115,3 @@ async def classify_number(number: int):
         "digit_sum": digit_sum_value,
         "fun_fact": fun_fact
     })
-
-# Catch any invalid or missing parameters
-@app.exception_handler(HTTPException)
-async def validation_exception_handler(request, exc):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"number": str(request.query_params.get('number')), "error": True},
-    )
-
