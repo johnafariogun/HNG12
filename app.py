@@ -12,7 +12,7 @@ It also provides the digit sum and a fun fact about the number using the Numbers
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 from typing import Union
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import aiohttp
@@ -141,8 +141,10 @@ async def classify_number(number: Union[int, str]) -> JSONResponse:
             - digit_sum: Sum of the digits of the number.
             - fun_fact: A mathematical fact about the number.
 
-    Raises:
-        HTTPException: If the input number is invalid.
+    If ValueError Returns:
+        JSONResponse: A JSON response containing:
+        - number: the invalid iput(alphabet)
+        - error: true
     """
     try:
         number = int(number)
