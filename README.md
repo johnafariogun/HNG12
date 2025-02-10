@@ -30,7 +30,7 @@ Additionally, it calculates the **sum of the digits** of the number and fetches 
 1. **Clone the Repository**
    ```sh
    git clone <repository-url>
-   cd HNG12
+   cd HNG12-stage1-number-classifier-api
    ```
 
 2. **Install Dependencies**
