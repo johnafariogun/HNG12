@@ -30,7 +30,7 @@ Additionally, it calculates the **sum of the digits** of the number and fetches 
 1. **Clone the Repository**
    ```sh
    git clone <repository-url>
-   cd fastapi-number-classifier
+   cd HNG12
    ```
 
 2. **Install Dependencies**
@@ -40,7 +40,7 @@ Additionally, it calculates the **sum of the digits** of the number and fetches 
 
 3. **Run the API**
    ```sh
-   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+   uvicorn app:app --host 0.0.0.0 --port 8000 --reload
    ```
 
 ## API Endpoints
